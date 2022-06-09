@@ -12,6 +12,8 @@ export default function Result({ result, setResult }) {
         } else {
           setResult(result.slice(0, -1));
         }
+      } else {
+        setResult(0);
       }
     } else {
       setResult(0);
