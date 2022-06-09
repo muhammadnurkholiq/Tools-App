@@ -1,25 +1,15 @@
 import React from "react";
-import { NativeBaseProvider, Box } from "native-base";
-
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { NativeBaseProvider } from "native-base";
 
 // screen
-import Calculator from "./src/screen/Calculator";
+import Calculator from "./src/screens/Calculator";
 
 export default function App() {
   return (
     <NativeBaseProvider>
-      <Box>Hello world</Box>
+      <StatusBar style="auto" />
+      <Calculator />
     </NativeBaseProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: "#fff",
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
-});
