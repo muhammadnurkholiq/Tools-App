@@ -17,7 +17,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 // screen
 import CalculatorScreen from "./src/screens/Calculator";
-import Page2 from "./src/screens/Page2";
+import Todo from "./src/screens/Todo";
 
 // create stack navigation
 const Stack = createStackNavigator();
@@ -28,6 +28,7 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
+      initialRouteName="Todo"
       screenOptions={({ route }) => ({
         headerStyle: { backgroundColor: "#FFA0A0" },
         headerTitleStyle: {
@@ -44,7 +45,7 @@ function MyTabs() {
             iconName = focused ? "calculator" : "calculator-outline";
             iconColor = focused ? "#FF5757" : "#FFA0A0";
             return <Ionicons name={iconName} size={24} color={iconColor} />;
-          } else if (route.name === "Page2") {
+          } else if (route.name === "Todo") {
             iconName = focused
               ? "clipboard-check-multiple"
               : "clipboard-check-multiple-outline";
@@ -63,7 +64,7 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Calculator" component={CalculatorScreen} />
-      <Tab.Screen name="Page2" component={Page2} />
+      <Tab.Screen name="Todo" component={Todo} />
     </Tab.Navigator>
   );
 }
