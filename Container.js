@@ -25,7 +25,7 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Todo"
+      initialRouteName="Calculator"
       screenOptions={({ route }) => ({
         headerStyle: { backgroundColor: "#FFA0A0" },
         headerTitleStyle: {
@@ -67,9 +67,6 @@ function MyTabs() {
 }
 
 export default function Container() {
-  // init theme
-  // const theme = useTheme();
-
   return (
     <NavigationContainer>
       <Stack.Navigator>

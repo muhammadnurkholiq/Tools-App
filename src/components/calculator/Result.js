@@ -40,14 +40,20 @@ export default function Result({ result, setResult }) {
 // styling
 const output = StyleSheet.create({
   outputField: {
-    padding: 20,
+    width: "95%",
+    height: 70,
     backgroundColor: "#fff",
     borderRadius: 10,
-    marginLeft: 5,
-    marginRight: 5,
-    marginBottom: 40,
-    alignItems: "center",
     justifyContent: "center",
+    alignSelf: "center",
+    textAlign: "center",
+    marginBottom: 30,
+  },
+  textOutput: {
+    fontSize: 30,
+    fontWeight: "700",
+    borderRadius: 10,
+    textAlign: "center",
   },
   buttons: {
     flexDirection: "row",
@@ -71,12 +77,6 @@ const output = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     alignContent: "center",
-  },
-  textOutput: {
-    height: 30,
-    fontSize: 30,
-    fontWeight: "700",
-    paddingTop: 10,
   },
   text: {
     color: "white",
