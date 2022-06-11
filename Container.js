@@ -12,9 +12,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // icon
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-// theme native base
-// import { useTheme } from "native-base";
-
 // screen
 import CalculatorScreen from "./src/screens/Calculator";
 import Todo from "./src/screens/Todo";

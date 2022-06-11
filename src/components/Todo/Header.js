@@ -23,8 +23,8 @@ const header = StyleSheet.create({
     padding: 30,
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
-      height: 4,
+      width: 10,
+      height: 10,
     },
     shadowOpacity: 1,
     shadowRadius: 8,

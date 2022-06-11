@@ -1,7 +1,6 @@
 import * as React from "react";
 // NativeBaseProvider
 import { NativeBaseProvider } from "native-base";
-
 // statusbar
 import { StatusBar } from "react-native";
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { TouchableOpacity, Text } from "react-native";
-import { StyleSheet } from "react-native-web";
 
 export default function Buttons(props) {
   const { value, bgColor, onPress } = props;
