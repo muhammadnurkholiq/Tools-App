@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Box, Text } from "native-base";
+import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 
 export default function Result({ result, setResult }) {
   // handleDelete
@@ -22,9 +21,9 @@ export default function Result({ result, setResult }) {
 
   return (
     <>
-      <Box style={output.outputField}>
+      <View style={output.outputField}>
         <Text style={output.textOutput}>{result}</Text>
-      </Box>
+      </View>
 
       <View style={output.buttons}>
         <TouchableOpacity style={output.btnClear} onPress={() => setResult(0)}>

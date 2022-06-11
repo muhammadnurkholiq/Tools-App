@@ -1,98 +1,249 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  ScrollView,
+  Alert,
   TouchableOpacity,
   Text,
   View,
   TextInput,
+  FlatList,
+  RefreshControl,
 } from "react-native";
+
+// API
+import { API } from "../../config/API";
 
 // icon
 import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
-export default function Body() {
-  const [isDone, setIsDone] = useState(false);
+export default function Body({ todos, getTodos, isLoading, setIsLoading }) {
   const [isEdit, setIsEdit] = useState(false);
+  const [id, setId] = useState(0);
+  const [form, setForm] = useState({
+    activity: "",
+    status: "",
+  });
+
+  // Create Component List
+  const renderTodos = ({ item }) => {
+    return (
+      <>
+        {/* todo  */}
+        <View style={body.todo} key={item.id}>
+          {isEdit && item.id === id ? (
+            <>
+              <TextInput
+                style={body.editTextInput}
+                placeholder="Create a new todo..."
+                value={form.activity}
+                onChangeText={(value) => {
+                  setForm((prevState) => ({ ...prevState, activity: value }));
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  handleUpdate(item.id);
+                }}
+                style={body.editBtn}
+              >
+                <Text style={body.editTextBtn}>Submit</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {/* checkbox  */}
+              <View style={body.todoStatus}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleStatus(item.status, item.id);
+                  }}
+                >
+                  {item.status === "finished" ? (
+                    <MaterialIcons name="check-box" style={body.todoBtn} />
+                  ) : (
+                    <MaterialIcons
+                      name="check-box-outline-blank"
+                      style={body.todoBtn}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {/* text */}
+              <Text style={body.text}>{item.activity}</Text>
+              {/* edit  */}
+              <View style={body.todoAction}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleEdit(item.id);
+                  }}
+                >
+                  <Feather name="edit" style={body.todoBtn} />
+                </TouchableOpacity>
+              </View>
+              <View style={body.todoAction}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleDelete(item.id);
+                  }}
+                >
+                  <FontAwesome5 name="trash-alt" style={body.todoBtn} />
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </View>
+      </>
+    );
+  };
 
   // handle done for status
-  const handleStatus = async (e) => {
-    try {
-      setIsDone(!isDone);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleStatus = (status, id) => {
+    Alert.alert(
+      "Confirmation",
+      "Are you sure you want to change the status of this activity?",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            setIsLoading(true);
+            const config = {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            };
+
+            let updateStatus = {
+              status: "",
+            };
+
+            if (status === "unfinished") {
+              updateStatus = {
+                status: "finished",
+              };
+            } else {
+              updateStatus = {
+                status: "unfinished",
+              };
+            }
+
+            const data = JSON.stringify(updateStatus);
+
+            API.patch(`/todos/${id}`, data, config)
+              .then((res) => {
+                if (updateStatus.status === "finished") {
+                  Alert.alert(res.data.status, "You completed your activity!");
+                } else {
+                  Alert.alert(
+                    res.data.status,
+                    "You haven't finished your activity!"
+                  );
+                }
+                getTodos();
+                setIsLoading(false);
+              })
+              .catch(() => {
+                alert("Error fetch data");
+              });
+          },
+        },
+        {
+          text: "No",
+        },
+      ]
+    );
   };
 
   // handle edit
-  const handleEdit = async (e) => {
-    try {
-      setIsEdit(!isEdit);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleEdit = (id) => {
+    setIsLoading(true);
+    setId(id);
+    API.get(`/todos/${id}`).then((res) => {
+      setForm({
+        activity: res.data.data.activity,
+        status: res.data.data.status,
+      });
+      setIsLoading(false);
+      setIsEdit(true);
+    });
   };
 
   // handle update
-  const handleUpdate = async (e) => {
-    try {
-      setIsEdit(!isEdit);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleUpdate = (id) => {
+    Alert.alert(
+      "Confirmation",
+      "Are you sure you want to change your activity?",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            setIsLoading(true);
+            const config = {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            };
+
+            const data = JSON.stringify(form);
+
+            API.patch(`/todos/${id}`, data, config)
+              .then((res) => {
+                Alert.alert(
+                  res.data.status,
+                  "Your activity has been successfully updated!"
+                );
+                setIsEdit(false);
+                getTodos();
+                setIsLoading(false);
+              })
+              .catch(() => {
+                alert("Error");
+              });
+          },
+        },
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+
+  // handle delete
+  const handleDelete = (id) => {
+    Alert.alert("Confirmation", "Are you sure want to delete this activity?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          setIsLoading(true);
+          API.delete(`/todos/${id}`)
+            .then((res) => {
+              Alert.alert(
+                res.data.status,
+                "Activity data deleted successfully!"
+              );
+              getTodos();
+              setIsLoading(false);
+            })
+            .catch(() => {
+              alert("Error");
+            });
+        },
+      },
+      {
+        text: "No",
+      },
+    ]);
   };
 
   return (
-    <ScrollView style={body.container}>
-      {/* todo  */}
-      <View style={body.todo} key={1}>
-        {isEdit ? (
-          <>
-            <TextInput
-              style={body.editTextInput}
-              placeholder="Create a new todo..."
-            />
-            <TouchableOpacity onPress={handleUpdate} style={body.editBtn}>
-              <Text style={body.editTextBtn}>Submit</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            {/* checkbox  */}
-            <View style={body.todoStatus}>
-              <TouchableOpacity onPress={handleStatus}>
-                {isDone === true ? (
-                  <MaterialIcons name="check-box" style={body.todoBtn} />
-                ) : (
-                  <MaterialIcons
-                    name="check-box-outline-blank"
-                    style={body.todoBtn}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
-            {/* text */}
-            <ScrollView
-              style={body.todoText}
-              contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-            >
-              <Text style={body.text}>hello world</Text>
-            </ScrollView>
-            {/* edit  */}
-            <View style={body.todoAction}>
-              <TouchableOpacity onPress={handleEdit}>
-                <Feather name="edit" style={body.todoBtn} />
-              </TouchableOpacity>
-            </View>
-            <View style={body.todoAction}>
-              <TouchableOpacity>
-                <FontAwesome5 name="trash-alt" style={body.todoBtn} />
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-      </View>
-    </ScrollView>
+    <FlatList
+      style={body.container}
+      data={todos}
+      renderItem={renderTodos}
+      keyExtractor={(item) => item.id.toString()}
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={getTodos} />
+      }
+    />
   );
 }
 
@@ -127,14 +278,14 @@ const body = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  todoText: {
+  text: {
     width: "60%",
     marginStart: 5,
     paddingRight: 5,
-  },
-  text: {
     fontWeight: "700",
     fontSize: 17,
+    justifyContent: "center",
+    alignSelf: "center",
   },
   todoAction: {
     width: "15%",

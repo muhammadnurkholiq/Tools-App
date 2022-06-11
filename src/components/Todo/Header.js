@@ -1,16 +1,68 @@
+import { useState } from "react";
+
+// API
+import { API } from "../../config/API";
+
 import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
   Text,
+  Keyboard,
+  Alert,
 } from "react-native";
 
-export default function Header() {
+export default function Header({ getTodos }) {
+  const [form, setForm] = useState({
+    activity: "",
+  });
+
+  // handle add
+  const handleAdd = () => {
+    Keyboard.dismiss();
+    Alert.alert("Confirmation", "Are you sure want to add this activity?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          const config = {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          };
+
+          const data = JSON.stringify(form);
+
+          API.post("/todos", data, config)
+            .then((res) => {
+              alert(res.data.message);
+              getTodos();
+              setForm({
+                activity: "",
+              });
+            })
+            .catch(() => {
+              alert(error);
+            });
+        },
+      },
+      {
+        text: "No",
+      },
+    ]);
+  };
+
   return (
     <View style={header.container}>
-      <TextInput style={header.input} placeholder="Create a new todo..." />
-      <TouchableOpacity style={header.btnTodo}>
+      <TextInput
+        style={header.input}
+        placeholder="Create a new todo..."
+        value={form.activity}
+        onChangeText={(value) => {
+          setForm((prevState) => ({ ...prevState, activity: value }));
+        }}
+      />
+      <TouchableOpacity onPress={handleAdd} style={header.btnTodo}>
         <Text style={header.btnTodoText}>ADD TODO</Text>
       </TouchableOpacity>
     </View>
